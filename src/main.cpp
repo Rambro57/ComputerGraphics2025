@@ -4,6 +4,10 @@
 
 #include <iostream>
 
+#include <SDL.h>
+
+#include "Canis/Canis.hpp"
+
 // git restore .
 // git fetch
 // git pull
@@ -15,6 +19,11 @@ extern "C" int main(int argc, char* argv[])
 int main(int argc, char* argv[])
 #endif
 {
-    std::cout << "Hello, World!" << std::endl;
+    Canis::Init();
+
+    SDL_CreateWindow("Computer Graphics", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 360, 0);
+
+    while(true){}
+
     return 0;
 }
