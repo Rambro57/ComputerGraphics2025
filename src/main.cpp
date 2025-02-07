@@ -7,6 +7,7 @@
 #include <SDL.h>
 
 #include "Canis/Canis.hpp"
+#include "Canis/Window.hpp"
 
 // git restore .
 // git fetch
@@ -21,9 +22,15 @@ int main(int argc, char* argv[])
 {
     Canis::Init();
 
-    SDL_CreateWindow("Computer Graphics", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 360, 0);
+    Canis::Window window;
+    window.Create();
+    
+    bool running = false;
 
-    while(true){}
+    while(running)
+    {
+        
+    }
 
     return 0;
 }
