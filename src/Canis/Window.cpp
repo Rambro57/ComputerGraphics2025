@@ -56,7 +56,10 @@ namespace Canis
     }
 
     void Window::Swap() {
-        
+        // After we draw our sprite and models to a window buffer
+        // We want to display the one we were drawing to and
+        // get the old buffer to start drawing our next frame to
+        SDL_GL_SwapWindow((SDL_Window*)m_sdlWindow);
     }
 
     void Window::ClearColor() {

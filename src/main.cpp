@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 
     while(running)
     {
-        
+        window.Swap();
     }
 
     return 0;
