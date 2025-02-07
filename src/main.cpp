@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     Canis::Window window;
     window.Create();
     
-    bool running = false;
+    bool running = true;
 
     while(running)
     {
