@@ -5,8 +5,11 @@
 #include <iostream>
 
 #include <SDL.h>
+#include <glm/glm.hpp>
+#include <GL/glew.h>
 
 #include "Canis/Canis.hpp"
+#include "Canis/Debug.hpp"
 #include "Canis/Window.hpp"
 
 // git restore .
@@ -26,9 +29,32 @@ int main(int argc, char* argv[])
     window.Create("Computer Graphics 2025", 640, 360, 0);
     
     bool running = true;
+    glm::vec2 mousePos(0.0f);
 
     while(running)
     {
+        SDL_Event event;
+
+        while (SDL_PollEvent(&event))
+        {
+            switch (event.type)
+            {
+            case SDL_QUIT:
+                running = false;
+                break;
+            case SDL_MOUSEMOTION:
+                mousePos.x = event.motion.x;
+                mousePos.y = window.GetScreenHeight() - event.motion.y;
+                break;
+            default:
+                break;
+            }
+        }
+
+        glClearColor(1.0f, 0.05f, 0.05f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        Canis::Log("Mouse Pos: " + glm::to_string(mousePos));
         window.SwapBuffer();
     }
 
