@@ -1,52 +1,118 @@
 #include "Window.hpp"
+#include "Debug.hpp"
 #include <SDL.h>
 #include <GL/glew.h>
-#include <iostream>
+
 
 namespace Canis
 {
-    int Window::Create() {
-        m_width = 640;
-        m_height = 360;
+    Window::Window()
+    {
+    }
 
+    Window::~Window()
+    {
+    }
+
+    int Window::CreateFullScreen(std::string _windowName) {
+
+        SDL_DisplayMode DM;
+        SDL_GetCurrentDisplayMode(0, &DM);
+
+        unsigned int windowFlags = 0;
+	    windowFlags |= WindowFlags::FULLSCREEN;
+
+        m_fullscreen = true;
+
+        return Create(_windowName, DM.w, DM.h, windowFlags);
+    }
+
+    int Window::Create(std::string _windowName, int _screenWidth, int _screenHeight, unsigned int _currentFlags)
+    {
+        // if you wanted you application to support multiple rendering apis 
+        // you would not want to hard code it here
         Uint32 flags = SDL_WINDOW_OPENGL;
+
+        m_screenWidth = _screenWidth;
+        m_screenHeight = _screenHeight;
 
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-        m_sdlWindow = (void*)SDL_CreateWindow("Computer Graphics",
-            SDL_WINDOWPOS_CENTERED,
-            SDL_WINDOWPOS_CENTERED, 
-            m_width, m_height, flags);
+        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
         
-        if (m_sdlWindow == nullptr)
+        if (_currentFlags & WindowFlags::FULLSCREEN)
         {
-            return 1; // failed to open window
+            flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+            m_fullscreen = true;
+        }
+        if (_currentFlags & WindowFlags::BORDERLESS)
+            flags |= SDL_WINDOW_BORDERLESS;
+
+        // Create Window
+        m_sdlWindow = SDL_CreateWindow(_windowName.c_str(), SDL_WINDOWPOS_CENTERED_DISPLAY(0), SDL_WINDOWPOS_CENTERED_DISPLAY(0), m_screenWidth, m_screenHeight, flags);
+        
+        SDL_Surface *surface;     // Declare an SDL_Surface to be filled in with pixel data from an image file
+        Uint16 pixels[16*16] = {  // ...or with raw pixel data:
+            0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0xf435, 0xf435, 0xf435, 0xf435, 0xf435, 0xf435, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
+            0x0fff, 0x0fff, 0x0fff, 0xf435, 0xf435, 0xf435, 0xf435, 0xffff, 0xffff, 0xf435, 0xf435, 0xf435, 0xf435, 0x0fff, 0x0fff, 0x0fff,
+            0x0fff, 0x0fff, 0xf435, 0xf435, 0xf435, 0xf435, 0xf435, 0xffff, 0xffff, 0xf435, 0xf435, 0xf435, 0xf435, 0xf435, 0x0fff, 0x0fff,
+            0x0fff, 0xf435, 0xf435, 0xf435, 0xf435, 0xf435, 0xffff, 0xffff, 0xffff, 0xffff, 0xf435, 0xf435, 0xf435, 0xf435, 0xf435, 0x0fff,
+            0x0fff, 0xf435, 0xffff, 0xffff, 0xf435, 0xf435, 0xffff, 0xffff, 0xffff, 0xffff, 0xf435, 0xf435, 0xf435, 0xf435, 0xf435, 0x0fff,
+            0xf435, 0xf435, 0xffff, 0xffff, 0xffff, 0xf435, 0xffff, 0xffff, 0xffff, 0xffff, 0xf435, 0xf435, 0xf435, 0xffff, 0xf435, 0xf435,
+            0xf435, 0xffff, 0xffff, 0xffff, 0xffff, 0xf435, 0xf435, 0xffff, 0xffff, 0xf435, 0xf435, 0xf435, 0xffff, 0xffff, 0xffff, 0xf435,
+            0xf435, 0xffff, 0xffff, 0xffff, 0xffff, 0xf435, 0xf435, 0xf435, 0xf435, 0xf435, 0xf435, 0xffff, 0xffff, 0xffff, 0xffff, 0xf435,
+            0xf435, 0xf435, 0xffff, 0xffff, 0xf435, 0xf435, 0xffff, 0xffff, 0xffff, 0xf435, 0xf435, 0xffff, 0xffff, 0xffff, 0xffff, 0xf435,
+            0xf435, 0xf435, 0xf435, 0xf435, 0xf435, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xf435, 0xf435, 0xffff, 0xffff, 0xf435, 0xf435,
+            0xf435, 0xf435, 0xf435, 0xf435, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xf435, 0xf435, 0xf435, 0xf435, 0xf435, 0xf435,
+            0x0fff, 0xf435, 0xf435, 0xf435, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xf435, 0xf435, 0xf435, 0xf435, 0x0fff,
+            0x0fff, 0xf435, 0xf435, 0xf435, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xf435, 0xf435, 0xf435, 0xf435, 0x0fff,
+            0x0fff, 0x0fff, 0xf435, 0xf435, 0xf435, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xf435, 0xf435, 0xf435, 0xf435, 0x0fff, 0x0fff,
+            0x0fff, 0x0fff, 0x0fff, 0xf435, 0xf435, 0xf435, 0xffff, 0xffff, 0xffff, 0xf435, 0xf435, 0xf435, 0xf435, 0x0fff, 0x0fff, 0x0fff,
+            0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0xf435, 0xf435, 0xf435, 0xf435, 0xf435, 0xf435, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
+        };
+        surface = SDL_CreateRGBSurfaceFrom(pixels,16,16,16,16*2,0x0f00,0x00f0,0x000f,0xf000);
+
+        // The icon is attached to the window pointer
+        SDL_SetWindowIcon((SDL_Window*)m_sdlWindow, surface);
+
+        // ...and the surface containing the icon pixel data is no longer required.
+        SDL_FreeSurface(surface);
+
+        if ((SDL_Window*)m_sdlWindow == nullptr) // Check for an error when creating a window
+        {
+            FatalError("SDL Window could not be created");
         }
 
-        m_glContext = (void*)SDL_GL_CreateContext((SDL_Window*)m_sdlWindow);
+        // Create OpenGL Context
+        void* m_glContext = (void*)SDL_GL_CreateContext((SDL_Window*)m_sdlWindow);
 
-        if (m_glContext == nullptr)
+        if (m_glContext == nullptr) // Check for an error when creating the OpenGL Context
         {
-            return 2; // failed to create gl context
+            FatalError("SDL_GL context could not be created!");
         }
 
+
+
+        // Load OpenGL
         GLenum error = glewInit();
 
-        if (error != GLEW_OK)
+        if (error != GLEW_OK) // Check for an error loading OpenGL
         {
-            return 3;
+            FatalError("Could not init GLEW");
         }
 
-        const char* openGLVersion = (const char*)glGetString(GL_VERSION);
-        std::cout << openGLVersion << std::endl;
+        std::string openglVersion = (const char*)glGetString(GL_VERSION);
+        Log("*** OpenGL Version: " + openglVersion + " ***");
 
-        ClearColor();
+        // before a new frame is drawn we need to clear the buffer
+        // the clear color will be the new value of all of the pixels
+        // in that buffer
+        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 
         // VSYNC 0 off 1 on
-        SDL_GL_SetSwapInterval(1);
+        SDL_GL_SetSwapInterval(0);
 
         // Enable alpha blending
         glEnable(GL_BLEND);
@@ -55,17 +121,38 @@ namespace Canis
         return 0;
     }
 
-    void Window::Swap() {
+    void Window::SetWindowName(std::string _windowName)
+    {
+        SDL_SetWindowTitle((SDL_Window*)m_sdlWindow,_windowName.c_str());
+    }
+
+    void Window::SwapBuffer()
+    {
         // After we draw our sprite and models to a window buffer
         // We want to display the one we were drawing to and
         // get the old buffer to start drawing our next frame to
         SDL_GL_SwapWindow((SDL_Window*)m_sdlWindow);
     }
 
-    void Window::ClearColor() {
-        // before a new frame is drawn we need to clear the buffer
-        // the clear color will be the new value of all of the pixels
-        // in that buffer
-        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+    void Window::MouseLock(bool _isLocked)
+    {
+        m_mouseLock = _isLocked;
+        if (_isLocked)
+        {
+            SDL_CaptureMouse(SDL_TRUE);
+            SDL_SetRelativeMouseMode(SDL_TRUE);
+        }
+        else
+        {
+            SDL_CaptureMouse(SDL_FALSE);
+            SDL_SetRelativeMouseMode(SDL_FALSE);
+        }
     }
-}
+
+    void Window::ToggleFullScreen()
+    {
+        m_fullscreen = !m_fullscreen;
+
+        SDL_SetWindowFullscreen((SDL_Window*)m_sdlWindow, m_fullscreen);
+    }
+} // end of Canis namespace

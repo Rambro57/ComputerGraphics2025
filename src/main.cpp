@@ -23,13 +23,13 @@ int main(int argc, char* argv[])
     Canis::Init();
 
     Canis::Window window;
-    window.Create();
+    window.Create("Computer Graphics 2025", 640, 360, 0);
     
     bool running = true;
 
     while(running)
     {
-        window.Swap();
+        window.SwapBuffer();
     }
 
     return 0;
