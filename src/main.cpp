@@ -46,15 +46,29 @@ int main(int argc, char* argv[])
                 mousePos.x = event.motion.x;
                 mousePos.y = window.GetScreenHeight() - event.motion.y;
                 break;
+            case SDL_KEYUP:
+                if (event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
+                    Canis::Log("enter was never real");
+                }
+                break;
+            case SDL_KEYDOWN:
+                if (event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
+                    Canis::Log("enter is real");
+                }
+                break;
             default:
                 break;
             }
         }
 
-        glClearColor(1.0f, 0.05f, 0.05f, 1.0f);
+        glClearColor(
+            mousePos.x/window.GetScreenWidth(),
+            mousePos.y/window.GetScreenHeight(),
+            sin((float)SDL_GetTicks()/1000.0f), 1.0f);
+        
         glClear(GL_COLOR_BUFFER_BIT);
 
-        Canis::Log("Mouse Pos: " + glm::to_string(mousePos));
+        //Canis::Log("Mouse Pos: " + glm::to_string(mousePos));
         window.SwapBuffer();
     }
 
