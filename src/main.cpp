@@ -11,6 +11,7 @@
 #include "Canis/Canis.hpp"
 #include "Canis/Debug.hpp"
 #include "Canis/Window.hpp"
+#include "Canis/InputManager.hpp"
 
 // git restore .
 // git fetch
@@ -27,6 +28,8 @@ int main(int argc, char* argv[])
 
     Canis::Window window;
     window.Create("Computer Graphics 2025", 640, 360, 0);
+
+    Canis::InputManager inputManager;
     
     bool running = true;
     glm::vec2 mousePos(0.0f);
