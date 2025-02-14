@@ -30,6 +30,7 @@ namespace Canis
         DPAD_LEFT       = 8192u,
         DPAD_RIGHT      = 16384u
     };
+    
     struct GameControllerData
     {
         glm::vec2 leftStick = glm::vec2(0.0f);

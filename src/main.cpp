@@ -30,43 +30,14 @@ int main(int argc, char* argv[])
     window.Create("Computer Graphics 2025", 640, 360, 0);
 
     Canis::InputManager inputManager;
-    
-    bool running = true;
-    glm::vec2 mousePos(0.0f);
 
-    while(running)
+    while(inputManager.Update(window.GetScreenWidth(), window.GetScreenHeight()))
     {
-        SDL_Event event;
-
-        while (SDL_PollEvent(&event))
-        {
-            switch (event.type)
-            {
-            case SDL_QUIT:
-                running = false;
-                break;
-            case SDL_MOUSEMOTION:
-                mousePos.x = event.motion.x;
-                mousePos.y = window.GetScreenHeight() - event.motion.y;
-                break;
-            case SDL_KEYUP:
-                if (event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
-                    Canis::Log("enter was never real");
-                }
-                break;
-            case SDL_KEYDOWN:
-                if (event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
-                    Canis::Log("enter is real");
-                }
-                break;
-            default:
-                break;
-            }
-        }
+        
 
         glClearColor(
-            mousePos.x/window.GetScreenWidth(),
-            mousePos.y/window.GetScreenHeight(),
+            inputManager.mouse.x/window.GetScreenWidth(),
+            inputManager.mouse.y/window.GetScreenHeight(),
             sin((float)SDL_GetTicks()/1000.0f), 1.0f);
         
         glClear(GL_COLOR_BUFFER_BIT);

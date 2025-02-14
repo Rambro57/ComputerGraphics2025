@@ -28,7 +28,7 @@ namespace Canis
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
-            ImGui_ImplSDL2_ProcessEvent(&event);
+            //ImGui_ImplSDL2_ProcessEvent(&event);
             switch (event.type)
             {
             case SDL_QUIT:
@@ -43,11 +43,11 @@ namespace Canis
                     //camera.ProcessMouseMovement(event.motion.xrel, -event.motion.yrel);
                 break;
             case SDL_KEYUP:
-                ReleasedKey(event.key.keysym.sym);
+                ReleasedKey(event.key.keysym.scancode);
                 //Canis::Log("UP" + std::to_string(event.key.keysym.sym));
                 break;
             case SDL_KEYDOWN:
-                PressKey(event.key.keysym.sym);
+                PressKey(event.key.keysym.scancode);
                 m_lastInputDeviceType = InputDevice::KEYBOARD;
                 break;
             case SDL_MOUSEBUTTONDOWN:
