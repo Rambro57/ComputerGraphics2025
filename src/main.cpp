@@ -28,7 +28,7 @@ const char *vertexShaderSource = "#version 330 core\n"
                                  "uniform float TIME;\n"
                                  "void main()\n"
                                  "{\n"
-                                 "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+                                 "   gl_Position = vec4(aPos.x + sin(TIME)*0.5f, aPos.y + cos(TIME)*0.5f, aPos.z, 1.0);\n"
                                  "   color = aPos;\n"
                                  "}\0";
 
@@ -39,7 +39,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
                                    "uniform float TIME;\n"
                                    "void main()\n"
                                    "{\n"
-                                   "   FragColor = vec4(cos(TIME));\n"
+                                   "   FragColor = COLOR;//vec4(vec3(cos(TIME)), 1.0f);\n"
                                    "}\0";
 
 void InitShader();
