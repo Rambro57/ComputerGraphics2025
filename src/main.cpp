@@ -24,19 +24,23 @@ unsigned int VBO, VAO;
 
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
+                                 "out vec3 color;\n"
                                  "void main()\n"
                                  "{\n"
                                  "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+                                 "   color = aPos;\n"
                                  "}\0";
 
 const char *fragmentShaderSource = "#version 330 core\n"
                                    "out vec4 FragColor;\n"
+                                   "in vec3 color;\n"
                                    "void main()\n"
                                    "{\n"
-                                   "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+                                   "   FragColor = vec4(color, 1.0f);\n"
                                    "}\0";
 
 void InitShader();
+void InitModel();
 
 #ifdef _WIN32
 #define main SDL_main
@@ -48,9 +52,12 @@ int main(int argc, char *argv[])
     Canis::Init();
 
     Canis::Window window;
-    window.Create("Computer Graphics 2025", 640, 360, 0);
+    window.Create("Computer Graphics 2025", 640, 640, 0);
 
     Canis::InputManager inputManager;
+
+    InitShader();
+    InitModel();
 
     while (inputManager.Update(window.GetScreenWidth(), window.GetScreenHeight()))
     {
@@ -63,7 +70,10 @@ int main(int argc, char *argv[])
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw first triangle
-        
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(0);
 
         // Canis::Log("Mouse Pos: " + glm::to_string(mousePos));
         window.SwapBuffer();
@@ -117,4 +127,27 @@ void InitShader()
     }
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+}
+
+void InitModel()
+{
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f, // bottom left
+        0.5f, -0.5f, 0.0f, // bottom right
+        0.0f, 0.5f, 0.0f // top center
+    };
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
