@@ -25,6 +25,7 @@ unsigned int VBO, VAO;
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
                                  "out vec3 color;\n"
+                                 "uniform float TIME;\n"
                                  "void main()\n"
                                  "{\n"
                                  "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
@@ -34,9 +35,11 @@ const char *vertexShaderSource = "#version 330 core\n"
 const char *fragmentShaderSource = "#version 330 core\n"
                                    "out vec4 FragColor;\n"
                                    "in vec3 color;\n"
+                                   "uniform vec4 COLOR;\n"
+                                   "uniform float TIME;\n"
                                    "void main()\n"
                                    "{\n"
-                                   "   FragColor = vec4(color, 1.0f);\n"
+                                   "   FragColor = vec4(cos(TIME));\n"
                                    "}\0";
 
 void InitShader();
@@ -71,6 +74,13 @@ int main(int argc, char *argv[])
 
         // draw first triangle
         glUseProgram(shaderProgram);
+
+        int index = glGetUniformLocation(shaderProgram,"COLOR");
+        glUniform4f(index, 1.0f, 1.0f, 1.0f, 1.0f);
+
+        index = glGetUniformLocation(shaderProgram,"TIME");
+        glUniform1f(index, SDL_GetTicks() / 1000.0f);
+
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);
