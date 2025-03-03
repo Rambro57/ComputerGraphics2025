@@ -38,9 +38,10 @@ const char *fragmentShaderSource = "#version 330 core\n"
                                    "in vec3 color;\n"
                                    "uniform vec4 COLOR;\n"
                                    "uniform float TIME;\n"
+                                   "uniform sampler2D texture1;\n"
                                    "void main()\n"
                                    "{\n"
-                                   "   FragColor = COLOR;//vec4(vec3(cos(TIME)), 1.0f);\n"
+                                   "   FragColor = texture(texture1, color.xy);//COLOR;//vec4(vec3(cos(TIME)), 1.0f);\n"
                                    "}\0";
 
 void InitShader();
@@ -62,6 +63,19 @@ int main(int argc, char *argv[])
 
     InitShader();
     InitModel();
+
+    Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/ForcePush.png", true);
+
+    int textureSlots = 0;
+
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &textureSlots);
+
+    Canis::Log(std::to_string(textureSlots));
+
+    glUniform1i(glGetUniformLocation(shaderProgram,"texture1"), 0);
+
+    glActiveTexture(GL_TEXTURE0+0);
+    glBindTexture(GL_TEXTURE_2D, texture.id);    
 
     while (inputManager.Update(window.GetScreenWidth(), window.GetScreenHeight()))
     {
