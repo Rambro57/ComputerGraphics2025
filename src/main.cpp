@@ -12,6 +12,7 @@
 #include "Canis/Debug.hpp"
 #include "Canis/Window.hpp"
 #include "Canis/InputManager.hpp"
+#include "Canis/IOManager.hpp"
 
 // git restore .
 // git fetch
