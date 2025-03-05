@@ -21,7 +21,7 @@
 
 // move out to external class
 unsigned int vertexShader;
-unsigned int VBO, VAO;
+unsigned int VBO, VAO, EBO;
 
 void InitModel();
 
@@ -42,7 +42,8 @@ int main(int argc, char *argv[])
     Canis::Shader spriteShader;
     spriteShader.Compile("assets/shaders/sprite.vs", "assets/shaders/sprite.fs");
     spriteShader.AddAttribute("aPos");
-    spriteShader.Link();
+    spriteShader.AddAttribute("aUV");
+    spriteShader.Link(); 
 
     InitModel();
 
@@ -75,7 +76,7 @@ int main(int argc, char *argv[])
         spriteShader.SetFloat("TIME", SDL_GetTicks() / 1000.0f);
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
         spriteShader.UnUse();
 
@@ -89,21 +90,35 @@ int main(int argc, char *argv[])
 void InitModel()
 {
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // bottom left
-        0.5f, -0.5f, 0.0f, // bottom right
-        0.0f, 0.5f, 0.0f // top center
+        // position         // uv
+        0.5f, 0.5f, 0.0f, 1.0f, 1.0f,          // top right
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,          // bottom right
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,        // bottom left
+        -0.5f, 0.5f, 0.0f,  0.0f, 1.0f,         // top left
+    };
+
+    unsigned int indices[] = {
+        0, 1, 3,
+        1, 2, 3
     };
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer( 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
