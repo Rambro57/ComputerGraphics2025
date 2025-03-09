@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     spriteShader.Compile("assets/shaders/sprite.vs", "assets/shaders/sprite.fs");
     spriteShader.AddAttribute("aPos");
     spriteShader.AddAttribute("aUV");
-    spriteShader.Link(); 
+    spriteShader.Link();
 
     InitModel();
 
@@ -57,8 +57,8 @@ int main(int argc, char *argv[])
 
     spriteShader.SetInt("texture1", 0);
 
-    glActiveTexture(GL_TEXTURE0+0);
-    glBindTexture(GL_TEXTURE_2D, texture.id);    
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_2D, texture.id);
 
     while (inputManager.Update(window.GetScreenWidth(), window.GetScreenHeight()))
     {
@@ -70,15 +70,51 @@ int main(int argc, char *argv[])
 
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // draw first triangle
-        spriteShader.Use();
-        spriteShader.SetVec4("COLOR", 1.0f, 1.0f, 1.0f, 1.0f);
-        spriteShader.SetFloat("TIME", SDL_GetTicks() / 1000.0f);
+        using namespace glm;
 
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-        spriteShader.UnUse();
+
+        mat4 projection = ortho(0.0f, (float)window.GetScreenWidth(), 0.0f, (float)window.GetScreenHeight(), 0.001f, 100.0f);
+        mat4 view = mat4(1.0f);
+        view = translate(view, vec3(0.0f, 0.0f, -0.5f));
+
+        {
+
+            mat4 transform = mat4(1.0f);
+            transform = translate(transform, vec3(0.5f, 0.5f, 0.0f));
+            // transform = rotate(transform, (SDL_GetTicks() / 1000.0f) / 3.14f, vec3(0.0f, 0.0f, 1.0f));
+            transform = scale(transform, vec3(300.0f)); // sin(SDL_GetTicks() / 1000.0f))
+
+            // draw first triangle
+            spriteShader.Use();
+            spriteShader.SetVec4("COLOR", 1.0f, 1.0f, 1.0f, 1.0f);
+            spriteShader.SetFloat("TIME", SDL_GetTicks() / 1000.0f);
+            spriteShader.SetMat4("TRANSFORM", transform);
+            spriteShader.SetMat4("PROJECTION", projection);
+            spriteShader.SetMat4("VIEW", view);
+
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            glBindVertexArray(0);
+            spriteShader.UnUse();
+        }
+        {
+
+            mat4 transform = mat4(1.0f);
+            transform = translate(transform, vec3(-0.5f, -0.5f, 0.0f));
+            // transform = rotate(transform, (SDL_GetTicks() / 1000.0f) / 3.14f, vec3(0.0f, 0.0f, 1.0f));
+            transform = scale(transform, vec3(sin(SDL_GetTicks() / 1000.0f) * -1));
+
+            // draw first triangle
+            spriteShader.Use();
+            spriteShader.SetVec4("COLOR", 1.0f, 1.0f, 1.0f, 1.0f);
+            spriteShader.SetFloat("TIME", SDL_GetTicks() / 1000.0f);
+            spriteShader.SetMat4("TRANSFORM", transform);
+
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            glBindVertexArray(0);
+            spriteShader.UnUse();
+        }
 
         // Canis::Log("Mouse Pos: " + glm::to_string(mousePos));
         window.SwapBuffer();
@@ -91,16 +127,15 @@ void InitModel()
 {
     float vertices[] = {
         // position         // uv
-        0.5f, 0.5f, 0.0f, 1.0f, 1.0f,          // top right
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,          // bottom right
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,        // bottom left
-        -0.5f, 0.5f, 0.0f,  0.0f, 1.0f,         // top left
+        0.5f, 0.5f, 0.0f, 1.0f, 1.0f,   // top right
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
+        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,  // top left
     };
 
     unsigned int indices[] = {
         0, 1, 3,
-        1, 2, 3
-    };
+        1, 2, 3};
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -114,10 +149,10 @@ void InitModel()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer( 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3*sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
