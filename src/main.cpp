@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 
             mat4 transform = mat4(1.0f);
             transform = translate(transform, vec3(0.5f, 0.5f, 0.0f));
-            // transform = rotate(transform, (SDL_GetTicks() / 1000.0f) / 3.14f, vec3(0.0f, 0.0f, 1.0f));
+            transform = rotate(transform, (SDL_GetTicks() / 1000.0f) / -3.14f, vec3(0.0f, 0.0f, 1.0f));
             transform = scale(transform, vec3(300.0f)); // sin(SDL_GetTicks() / 1000.0f))
 
             // draw first triangle
@@ -100,26 +100,7 @@ int main(int argc, char *argv[])
             glBindVertexArray(0);
             spriteShader.UnUse();
         }
-        {
 
-            mat4 transform = mat4(1.0f);
-            transform = translate(transform, vec3(-0.5f, -0.5f, 0.0f));
-            // transform = rotate(transform, (SDL_GetTicks() / 1000.0f) / 3.14f, vec3(0.0f, 0.0f, 1.0f));
-            transform = scale(transform, vec3(sin(SDL_GetTicks() / 1000.0f) * -1));
-
-            // draw first triangle
-            spriteShader.Use();
-            spriteShader.SetVec4("COLOR", 1.0f, 1.0f, 1.0f, 1.0f);
-            spriteShader.SetFloat("TIME", SDL_GetTicks() / 1000.0f);
-            spriteShader.SetMat4("TRANSFORM", transform);
-
-            glBindVertexArray(VAO);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-            glBindVertexArray(0);
-            spriteShader.UnUse();
-        }
-
-        // Canis::Log("Mouse Pos: " + glm::to_string(mousePos));
         window.SwapBuffer();
     }
 
