@@ -9,11 +9,11 @@
 #include <GL/glew.h>
 
 #include "Canis/Canis.hpp"
-#include "Canis/Debug.hpp"
-#include "Canis/Shader.hpp"
-#include "Canis/Window.hpp"
-#include "Canis/InputManager.hpp"
 #include "Canis/IOManager.hpp"
+
+#include "Entity.hpp"
+#include "Ball.hpp"
+#include "Paddle.hpp"
 
 // git restore .
 // git fetch
@@ -60,46 +60,47 @@ int main(int argc, char *argv[])
     glActiveTexture(GL_TEXTURE0 + 0);
     glBindTexture(GL_TEXTURE_2D, texture.id);
 
+    World world;
+    world.VAO = VAO;
+    world.window = &window;
+    world.inputManager = &inputManager;
+
+    Ball *ball = world.Instantiate<Ball>();
+    ball->shader = spriteShader;
+    ball->texture = texture;
+
+    {
+        Paddle *paddle = world.Instantiate<Paddle>();
+        paddle->shader = spriteShader;
+        paddle->texture = texture;
+        paddle->name = "RightPaddle";
+        paddle->position = glm::vec3(window.GetScreenWidth() * 0.9f, window.GetScreenHeight() * 0.5f, 0.0f);
+    }
+
+    {
+        Paddle *paddle = world.Instantiate<Paddle>();
+        paddle->shader = spriteShader;
+        paddle->texture = texture;
+        paddle->name = "LeftPaddle";
+        paddle->position = glm::vec3(window.GetScreenWidth() * 0.1f, window.GetScreenHeight() * 0.5f, 0.0f);
+    }
+
     while (inputManager.Update(window.GetScreenWidth(), window.GetScreenHeight()))
     {
 
-        glClearColor(
-            inputManager.mouse.x / window.GetScreenWidth(),
-            inputManager.mouse.y / window.GetScreenHeight(),
-            sin((float)SDL_GetTicks() / 1000.0f), 1.0f);
+        glClearColor( 1.0f, 1.0f, 1.0f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT);
 
         using namespace glm;
 
-
         mat4 projection = ortho(0.0f, (float)window.GetScreenWidth(), 0.0f, (float)window.GetScreenHeight(), 0.001f, 100.0f);
         
         mat4 view = mat4(1.0f);
-        view = translate(view, vec3(window.GetScreenWidth() * 0.5f * -1.0f, window.GetScreenHeight() * 0.5f * -1.0f, 0.5f));
+        view = translate(view, vec3(0.0f, 0.0f, 0.5f));
         view = inverse(view);
-        view = rotate(view, (SDL_GetTicks() / 1000.0f) / 3.14f, vec3(0.0f, 0.0f, 1.0f));
 
-        {
-
-            mat4 transform = mat4(1.0f);
-            transform = translate(transform, vec3(0.5f, 0.5f, 0.0f));
-            transform = rotate(transform, (SDL_GetTicks() / 1000.0f) / -3.14f, vec3(0.0f, 0.0f, 1.0f));
-            transform = scale(transform, vec3(300.0f)); // sin(SDL_GetTicks() / 1000.0f))
-
-            // draw first triangle
-            spriteShader.Use();
-            spriteShader.SetVec4("COLOR", 1.0f, 1.0f, 1.0f, 1.0f);
-            spriteShader.SetFloat("TIME", SDL_GetTicks() / 1000.0f);
-            spriteShader.SetMat4("TRANSFORM", transform);
-            spriteShader.SetMat4("PROJECTION", projection);
-            spriteShader.SetMat4("VIEW", view);
-
-            glBindVertexArray(VAO);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-            glBindVertexArray(0);
-            spriteShader.UnUse();
-        }
+        world.Update(view, projection);
 
         window.SwapBuffer();
     }
