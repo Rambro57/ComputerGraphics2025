@@ -74,8 +74,11 @@ int main(int argc, char *argv[])
 
 
         mat4 projection = ortho(0.0f, (float)window.GetScreenWidth(), 0.0f, (float)window.GetScreenHeight(), 0.001f, 100.0f);
+        
         mat4 view = mat4(1.0f);
-        view = translate(view, vec3(0.0f, 0.0f, -0.5f));
+        view = translate(view, vec3(window.GetScreenWidth() * 0.5f * -1.0f, window.GetScreenHeight() * 0.5f * -1.0f, 0.5f));
+        view = inverse(view);
+        view = rotate(view, (SDL_GetTicks() / 1000.0f) / 3.14f, vec3(0.0f, 0.0f, 1.0f));
 
         {
 
