@@ -26,10 +26,10 @@ public:
         return entity;
     }
 
-    void Update(glm::mat4 _view, glm::mat4 _projection) {
+    void Update(glm::mat4 _view, glm::mat4 _projection, float _dt) {
         for(Entity* e : entities)
         {
-            e->Update();
+            e->Update(_dt);
 
             e->shader.Use();
             e->shader.SetFloat("TIME", SDL_GetTicks() / 1000.0f);

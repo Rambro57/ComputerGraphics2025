@@ -10,6 +10,7 @@
 
 #include "Canis/Canis.hpp"
 #include "Canis/IOManager.hpp"
+#include "Canis/FrameRateManager.hpp"
 
 #include "Entity.hpp"
 #include "Ball.hpp"
@@ -38,6 +39,10 @@ int main(int argc, char *argv[])
     window.Create("Computer Graphics 2025", 640, 640, 0);
 
     Canis::InputManager inputManager;
+    Canis::FrameRateManager frameRateManager;
+    frameRateManager.Init(60.0f);
+    float deltaTime = 0.0f;
+    float fps = 0.0f;
 
     Canis::Shader spriteShader;
     spriteShader.Compile("assets/shaders/sprite.vs", "assets/shaders/sprite.fs");
@@ -74,7 +79,7 @@ int main(int argc, char *argv[])
         paddle->shader = spriteShader;
         paddle->texture = texture;
         paddle->name = "RightPaddle";
-        paddle->position = glm::vec3(window.GetScreenWidth() * 0.9f, window.GetScreenHeight() * 0.5f, 0.0f);
+        paddle->position = glm::vec3(window.GetScreenWidth() - (10.0f*0.5f), window.GetScreenHeight() * 0.5f, 0.0f);
     }
 
     {
@@ -82,12 +87,12 @@ int main(int argc, char *argv[])
         paddle->shader = spriteShader;
         paddle->texture = texture;
         paddle->name = "LeftPaddle";
-        paddle->position = glm::vec3(window.GetScreenWidth() * 0.1f, window.GetScreenHeight() * 0.5f, 0.0f);
+        paddle->position = glm::vec3(10.0f*0.5f, window.GetScreenHeight() * 0.5f, 0.0f);
     }
 
     while (inputManager.Update(window.GetScreenWidth(), window.GetScreenHeight()))
     {
-
+        deltaTime = frameRateManager.StartFrame();
         glClearColor( 1.0f, 1.0f, 1.0f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT);
@@ -100,9 +105,11 @@ int main(int argc, char *argv[])
         view = translate(view, vec3(0.0f, 0.0f, 0.5f));
         view = inverse(view);
 
-        world.Update(view, projection);
+        world.Update(view, projection, deltaTime);
 
         window.SwapBuffer();
+
+        fps = frameRateManager.EndFrame();
     }
 
     return 0;

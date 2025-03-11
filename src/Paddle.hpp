@@ -7,7 +7,9 @@
 class Paddle : public Entity {
 public:
     void Start();
-    void Update();
+    void Update(float _dt);
     void Draw();
     void OnDestroy();
+
+    float speed = 50.0f;
 };

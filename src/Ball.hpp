@@ -13,9 +13,10 @@ public:
         scale = vec3(100.0f, 100.0f, 0.0f);
     }
 
-    void Update() {
+    void Update(float _dt) {
         using namespace glm;
-        scale = vec3(100.0f + sin(SDL_GetTicks() / 1000.0f)*50.0f, 100.0f + sin(SDL_GetTicks() / 1000.0f)*50.0f, 0.0f);
+        
+        
     }
 
     void Draw() {

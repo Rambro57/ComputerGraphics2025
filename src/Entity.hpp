@@ -22,7 +22,7 @@ public:
     Canis::InputManager *inputManager = nullptr;
 
     virtual void Start() {}
-    virtual void Update() {}
+    virtual void Update(float _dt) {}
     virtual void Draw() {}
     virtual void OnDestroy() {}
 private:
