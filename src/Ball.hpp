@@ -15,8 +15,26 @@ public:
 
     void Update(float _dt) {
         using namespace glm;
+
+        window->SetWindowName("Pong");
         
-        
+        if (position.y > window->GetScreenHeight() - (scale.y * 0.5f)) {
+            position.y = window->GetScreenHeight() - (scale.y * 0.5f);
+            dir.y = abs(dir.y) * -1.0f;
+        }
+        if (position.y < scale.y * 0.5f) {
+            position.y = scale.y * 0.5f;
+            dir.y = abs(dir.y);
+        }
+        if (position.x > window->GetScreenWidth() - (scale.x * 0.5f)) {
+            position.x = window->GetScreenWidth() - (scale.x * 0.5f);
+        }
+        if (position.x < scale.x * 0.5f) {
+            position.x = scale.x * 0.5f;
+        }
+
+        if (dir != vec2(0.0f))
+            position += vec3(dir.x, dir.y, 0.0f) * speed * _dt;
     }
 
     void Draw() {
@@ -34,4 +52,7 @@ public:
     void OnDestroy() {
         using namespace glm;
     }
+
+    float speed = 100.0f;
+    glm::vec2 dir = glm::vec2(1.0f, 1.0f);
 };
