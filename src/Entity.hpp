@@ -27,3 +27,15 @@ public:
     virtual void OnDestroy() {}
 private:
 };
+
+static bool EntityOverlap2D(const Entity& a, const Entity& b) {
+    float aHalfWidth = a.scale.x * 0.5f;
+    float aHalfHeight = a.scale.y * 0.5f;
+    float bHalfWidth = b.scale.x * 0.5f;
+    float bHalfHeight = b.scale.y * 0.5f;
+
+    bool overlapX = std::abs(a.position.x - b.position.x) <= (aHalfWidth + bHalfWidth);
+    bool overlapY = std::abs(a.position.y - b.position.y) <= (aHalfHeight + bHalfHeight);
+
+    return overlapX && overlapY;
+}
