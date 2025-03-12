@@ -12,6 +12,15 @@ void Ball::Start() {
 
 void Ball::Update(float _dt) {
     window->SetWindowName("Pong");
+
+    if (dir == vec2(0.0f))
+    {
+        if (inputManager->GetKey(SDL_SCANCODE_SPACE))
+        {
+            vec2 directions[] = {vec2(1.0f, 1.0f), vec2(1.0f, -1.0f), vec2(-1.0f, 1.0f), vec2(-1.0f, -1.0f)};
+            dir = directions[rand()%4];
+        }
+    }
     
     if (position.y > window->GetScreenHeight() - (scale.y * 0.5f)) {
         position.y = window->GetScreenHeight() - (scale.y * 0.5f);
@@ -24,10 +33,12 @@ void Ball::Update(float _dt) {
 
     // detect score
     if (position.x > window->GetScreenWidth() - (scale.x * 0.5f)) {
-        position.x = window->GetScreenWidth() - (scale.x * 0.5f);
+        position = vec3(window->GetScreenWidth()*0.5f, window->GetScreenHeight()*0.5f, 0.0f);
+        dir = vec2(0.0f);
     }
     if (position.x < scale.x * 0.5f) {
-        position.x = scale.x * 0.5f;
+        position = vec3(window->GetScreenWidth()*0.5f, window->GetScreenHeight()*0.5f, 0.0f);
+        dir = vec2(0.0f);
     }
 
     // detect if ball hits left paddle
