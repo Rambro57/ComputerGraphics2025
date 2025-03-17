@@ -11,7 +11,7 @@ void Ball::Start() {
 }
 
 void Ball::Update(float _dt) {
-    window->SetWindowName("Pong");
+    //window->SetWindowName("Pong");
 
     if (dir == vec2(0.0f))
     {
@@ -35,10 +35,12 @@ void Ball::Update(float _dt) {
     if (position.x > window->GetScreenWidth() - (scale.x * 0.5f)) {
         position = vec3(window->GetScreenWidth()*0.5f, window->GetScreenHeight()*0.5f, 0.0f);
         dir = vec2(0.0f);
+        world->incrementScore(0);
     }
     if (position.x < scale.x * 0.5f) {
         position = vec3(window->GetScreenWidth()*0.5f, window->GetScreenHeight()*0.5f, 0.0f);
         dir = vec2(0.0f);
+        world->incrementScore(1);
     }
 
     // detect if ball hits left paddle
@@ -67,10 +69,4 @@ void Ball::Draw() {mat4 transform = mat4(1.0f);
 }
 
 void Ball::OnDestroy() {
-    if(position.x < (window->GetScreenWidth() * 0.5f)){
-        world->incrementScore(1);
-    }
-    else{
-        world->incrementScore(0);
-    }
 }

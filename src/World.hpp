@@ -87,5 +87,6 @@ public:
         std::string scoreRightString = std::to_string(scoreRight);
         std::string title = "Score: "+scoreLeftString+" / "+scoreRightString;
         window->SetWindowName(title);
+        Canis::Log(title);
     }
 };
