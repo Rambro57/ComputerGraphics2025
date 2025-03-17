@@ -67,5 +67,10 @@ void Ball::Draw() {mat4 transform = mat4(1.0f);
 }
 
 void Ball::OnDestroy() {
-    
+    if(position.x < (window->GetScreenWidth() * 0.5f)){
+        world->incrementScore(1);
+    }
+    else{
+        world->incrementScore(0);
+    }
 }
