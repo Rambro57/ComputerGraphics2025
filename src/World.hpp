@@ -15,6 +15,9 @@ public:
 
     std::vector<Entity*> entities = {};
 
+    int scoreLeft = 0;
+    int scoreRight = 0;
+
     template<typename T>
     T* Instantiate() {
         T* entity = new T;
@@ -71,5 +74,19 @@ public:
 
     Entity* FindEntityByName(std::string _name) {
         return FindByName<Entity>(_name);
+    }
+
+    void incrementScore(int winningSide){
+        if(winningSide == 0){
+            scoreLeft++;
+        }
+        else if(winningSide == 1){
+            scoreRight++;
+        }
+        std::string scoreLeftString = std::to_string(scoreLeft);
+        std::string scoreRightString = std::to_string(scoreRight);
+        std::string title = "Score: "+scoreLeftString+" / "+scoreRightString;
+        window->SetWindowName(title);
+        Canis::Log(title);
     }
 };

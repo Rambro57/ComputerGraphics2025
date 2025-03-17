@@ -11,6 +11,6 @@ public:
     void Draw();
     void OnDestroy();
 
-    float speed = 100.0f;
+    float speed = 110.0f;
     glm::vec2 dir = glm::vec2(0.0f, 0.0f);
 };

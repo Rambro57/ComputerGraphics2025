@@ -110,6 +110,10 @@ int main(int argc, char *argv[])
         window.SwapBuffer();
 
         fps = frameRateManager.EndFrame();
+        
+        if(SDL_GetTicks()%60==0){
+            std::cout << "FPS: " << fps << std::endl;
+        }
     }
 
     return 0;
