@@ -4,7 +4,7 @@ using namespace glm;
 
 void Trail::Start() {
     name = "Trail";
-    position = vec3(window->GetScreenWidth() * 0.5f, window->GetScreenHeight() * 0.5f, 0.01f);
+    position = vec3(window->GetScreenWidth() * 0.5f, window->GetScreenHeight() * 0.5f, -0.01f);
     scale = vec3(100.0f, 100.0f, 0.0f);
     destroyAt0 = 100;
 }
