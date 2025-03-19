@@ -6,6 +6,7 @@ using namespace glm;
 
 void Paddle::Start() {
     scale = vec3(20.0f, 100.0f, 0.0f);
+    destroyAt0 = -1;
 }
 
 void Paddle::Update(float _dt) {

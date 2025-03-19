@@ -45,6 +45,9 @@ public:
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
             e->shader.UnUse();
+            if(e->destroyAt0 == 0){
+                Destroy(e);
+            }
         }
     }
 

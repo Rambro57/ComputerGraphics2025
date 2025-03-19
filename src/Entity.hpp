@@ -16,6 +16,7 @@ public:
     Canis::Shader       shader;
     Canis::GLTexture    texture;
     glm::vec4           color;
+    int                 destroyAt0;
 
     World *world = nullptr;
     Canis::Window *window = nullptr;
