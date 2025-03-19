@@ -96,9 +96,9 @@ int main(int argc, char *argv[])
     while (inputManager.Update(window.GetScreenWidth(), window.GetScreenHeight()))
     {
         Trail *trail = world.Instantiate<Trail>();
-        trail->shader = spriteShader;
-        trail->texture = texture;
-        trail->position = ball->position;
+            trail->shader = spriteShader;
+            trail->texture = texture;
+            trail->position = ball->position;
         deltaTime = frameRateManager.StartFrame();
         glClearColor( 1.0f, 1.0f, 1.0f, 1.0f);
 

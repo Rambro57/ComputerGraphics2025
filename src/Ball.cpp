@@ -8,6 +8,7 @@ void Ball::Start() {
     name = "Ball";
     position = vec3(window->GetScreenWidth() * 0.5f, window->GetScreenHeight() * 0.5f, 0.0f);
     scale = vec3(100.0f, 100.0f, 0.0f);
+    destroyAt0 = -1;
 }
 
 void Ball::Update(float _dt) {
