@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
         paddle->position = glm::vec3(10.0f*0.5f, window.GetScreenHeight() * 0.5f, 0.0f);
     }
 
-    while (inputManager.Update(window.GetScreenWidth(), window.GetScreenHeight()))
+    while (inputManager.Update(window.GetScreenWidth(), window.GetScreenHeight()) && !world.close)
     {
         Trail *trail = world.Instantiate<Trail>();
             trail->shader = spriteShader;

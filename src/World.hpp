@@ -18,6 +18,8 @@ public:
     int scoreLeft = 0;
     int scoreRight = 0;
 
+    bool close = false;
+
     template<typename T>
     T* Instantiate() {
         T* entity = new T;
@@ -91,5 +93,13 @@ public:
         std::string title = "Score: "+scoreLeftString+" / "+scoreRightString;
         window->SetWindowName(title);
         Canis::Log(title);
+        if(scoreLeft >=5){
+            Canis::Log("Player 1 has won!");
+            close = true;
+        }
+        else if(scoreRight >=5){
+            Canis::Log("Player 2 has won!");
+            close = true;
+        }
     }
 };
