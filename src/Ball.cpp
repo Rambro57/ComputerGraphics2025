@@ -8,6 +8,8 @@ void Ball::Start() {
     name = "Ball";
     position = vec3(window->GetScreenWidth() * 0.5f, window->GetScreenHeight() * 0.5f, 0.0f);
     scale = vec3(100.0f, 100.0f, 0.0f);
+    // Set a distinctive color for easier debugging
+    color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
     destroyAt0 = -1;
 }
 
@@ -60,14 +62,23 @@ void Ball::Update(float _dt) {
         position += vec3(dir.x, dir.y, 0.0f) * speed * _dt;
 }
 
-void Ball::Draw() {mat4 transform = mat4(1.0f);
+void Ball::Draw() {
+    mat4 transform = mat4(1.0f);
     transform = translate(transform, position);
     transform = glm::scale(transform, scale);
 
     // set shader variables
+    shader.Use();
     shader.SetVec4("COLOR", color);
     shader.SetMat4("TRANSFORM", transform);
+    
+    // Make sure we're binding the correct texture
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture.id);
+    
+    // Draw the sprite
+    glBindVertexArray(world->VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void Ball::OnDestroy() {
-}
+void Ball::OnDestroy() {}

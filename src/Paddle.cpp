@@ -37,8 +37,12 @@ void Paddle::Draw() {
     transform = glm::scale(transform, scale);
 
     // set shader variables
+    shader.Use();
     shader.SetVec4("COLOR", color);
     shader.SetMat4("TRANSFORM", transform);
+    
+    // We don't bind any texture for paddles
+    // This makes them render as colored rectangles only
 }
 
 void Paddle::OnDestroy() {

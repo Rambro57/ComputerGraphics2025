@@ -7,9 +7,10 @@ uniform float TIME;
 uniform mat4 TRANSFORM;
 uniform mat4 PROJECTION;
 uniform mat4 VIEW;
+uniform vec2 textureOffset = vec2(0.0, 0.0); // Default value if not set
+
 void main()
 {
    gl_Position = PROJECTION * VIEW * TRANSFORM * vec4(aPos, 1.0f);
-   //gl_Position = vec4(aPos.x + sin(TIME)*0.5f, aPos.y + cos(TIME)*0.5f, aPos.z, 1.0);
-   uv = aUV;
+   uv = aUV + textureOffset; // Add texture offset for scrolling effect
 }

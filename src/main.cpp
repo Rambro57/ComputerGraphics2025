@@ -16,8 +16,7 @@
 #include "Ball.hpp"
 #include "Paddle.hpp"
 #include "Trail.hpp"
-
-//Test
+#include "Background.hpp"
 
 // git restore .
 // git fetch
@@ -41,49 +40,70 @@ int main(int argc, char *argv[])
     Canis::Window window;
     window.Create("Computer Graphics 2025", 640, 640, 0);
 
+    // Enable depth testing - most important for z-ordering
+    glEnable(GL_DEPTH_TEST);
+
     Canis::InputManager inputManager;
     Canis::FrameRateManager frameRateManager;
     frameRateManager.Init(60.0f);
     float deltaTime = 0.0f;
     float fps = 0.0f;
 
+    // Regular sprite shader for game objects
     Canis::Shader spriteShader;
     spriteShader.Compile("assets/shaders/sprite.vs", "assets/shaders/sprite.fs");
     spriteShader.AddAttribute("aPos");
     spriteShader.AddAttribute("aUV");
     spriteShader.Link();
+    spriteShader.SetInt("texture1", 0);
+
+    // Background-specific shader for scrolling effect
+    Canis::Shader backgroundShader;
+    backgroundShader.Compile("assets/shaders/background.vs", "assets/shaders/background.fs");
+    backgroundShader.AddAttribute("aPos");
+    backgroundShader.AddAttribute("aUV");
+    backgroundShader.Link();
+    backgroundShader.SetInt("texture1", 0);
 
     InitModel();
 
-    Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/LaserBallSprite.png", true);
+    Canis::GLTexture gameTexture = Canis::LoadImageGL("assets/textures/ForcePush.png", true);
+    Canis::GLTexture backgroundTexture = Canis::LoadImageGL("assets/textures/stars.png", true);
+    Canis::GLTexture blankTexture;
+    blankTexture.id = 0; // This will effectively use no texture
     Canis::GLTexture texture2 = Canis::LoadImageGL("assets/textures/LightsaberSprite.png", true);
 
     int textureSlots = 1;
-
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &textureSlots);
-
     Canis::Log(std::to_string(textureSlots));
-
-    spriteShader.SetInt("texture1", 0);
-
-    glActiveTexture(GL_TEXTURE0 + 0);
-    glBindTexture(GL_TEXTURE_2D, texture.id);
 
     World world;
     world.VAO = VAO;
     world.window = &window;
     world.inputManager = &inputManager;
 
+    // Create background with z-position behind everything else
+    Background *background = world.Instantiate<Background>();
+    background->shader = backgroundShader;  // Use background-specific shader
+    background->texture = backgroundTexture;
+    background->position.z = -5.0f;  // Put it far behind other elements
+    background->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);  // Full brightness
+
+    // Create ball with default z-position of 0
     Ball *ball = world.Instantiate<Ball>();
     ball->shader = spriteShader;
-    ball->texture = texture;
+    ball->texture = gameTexture;
+    ball->position.z = 0.0f;
+    ball->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);  // Full brightness
 
+    // Create paddles with default z-position of 0 and no texture (just color)
     {
         Paddle *paddle = world.Instantiate<Paddle>();
         paddle->shader = spriteShader;
         paddle->texture = texture2;
         paddle->name = "RightPaddle";
         paddle->position = glm::vec3(window.GetScreenWidth() - (10.0f*0.5f), window.GetScreenHeight() * 0.5f, 0.0f);
+        paddle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);  // White color
     }
 
     {
@@ -92,6 +112,7 @@ int main(int argc, char *argv[])
         paddle->texture = texture2;
         paddle->name = "LeftPaddle";
         paddle->position = glm::vec3(10.0f*0.5f, window.GetScreenHeight() * 0.5f, 0.0f);
+        paddle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);  // White color
     }
 
     while (inputManager.Update(window.GetScreenWidth(), window.GetScreenHeight()) && !world.close)
@@ -101,17 +122,31 @@ int main(int argc, char *argv[])
             trail->texture = texture;
             trail->position = ball->position;
         deltaTime = frameRateManager.StartFrame();
-        glClearColor( 1.0f, 1.0f, 1.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear depth buffer too
 
         using namespace glm;
 
-        mat4 projection = ortho(0.0f, (float)window.GetScreenWidth(), 0.0f, (float)window.GetScreenHeight(), 0.001f, 100.0f);
+        // Set up a proper projection with depth range
+        mat4 projection = ortho(0.0f, (float)window.GetScreenWidth(), 0.0f, (float)window.GetScreenHeight(), -10.0f, 10.0f);
         
         mat4 view = mat4(1.0f);
         view = translate(view, vec3(0.0f, 0.0f, 0.5f));
         view = inverse(view);
+
+        // Update TIME uniform for all shaders
+        float currentTime = SDL_GetTicks() / 1000.0f;
+        
+        // Set time for background shader
+        backgroundShader.Use();
+        backgroundShader.SetFloat("TIME", currentTime);
+        backgroundShader.UnUse();
+        
+        // Set time for sprite shader
+        spriteShader.Use();
+        spriteShader.SetFloat("TIME", currentTime);
+        spriteShader.UnUse();
 
         world.Update(view, projection, deltaTime);
 

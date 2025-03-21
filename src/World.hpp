@@ -24,7 +24,7 @@ public:
     T* Instantiate() {
         T* entity = new T;
         entity->window = window;
-        entity->inputManager;
+        entity->inputManager = inputManager;  // Fixed: added assignment operator
         entity->world = this;
         entity->Start();
         entities.push_back((Entity*)entity);
@@ -40,12 +40,16 @@ public:
             e->shader.SetFloat("TIME", SDL_GetTicks() / 1000.0f);
             e->shader.SetMat4("PROJECTION", _projection);
             e->shader.SetMat4("VIEW", _view);
-
             glActiveTexture(GL_TEXTURE0 + 0);
             glBindTexture(GL_TEXTURE_2D, e->texture.id);
-
             e->Draw();
-
+    
+            // Only bind texture if it has a valid ID (not 0)
+            if (e->texture.id != 0) {
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, e->texture.id);
+            }
+    
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
