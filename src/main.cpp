@@ -55,9 +55,10 @@ int main(int argc, char *argv[])
 
     InitModel();
 
-    Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/ForcePush.png", true);
+    Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/LaserBallSprite.png", true);
+    Canis::GLTexture texture2 = Canis::LoadImageGL("assets/textures/LightsaberSprite.png", true);
 
-    int textureSlots = 0;
+    int textureSlots = 1;
 
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &textureSlots);
 
@@ -80,7 +81,7 @@ int main(int argc, char *argv[])
     {
         Paddle *paddle = world.Instantiate<Paddle>();
         paddle->shader = spriteShader;
-        paddle->texture = texture;
+        paddle->texture = texture2;
         paddle->name = "RightPaddle";
         paddle->position = glm::vec3(window.GetScreenWidth() - (10.0f*0.5f), window.GetScreenHeight() * 0.5f, 0.0f);
     }
@@ -88,7 +89,7 @@ int main(int argc, char *argv[])
     {
         Paddle *paddle = world.Instantiate<Paddle>();
         paddle->shader = spriteShader;
-        paddle->texture = texture;
+        paddle->texture = texture2;
         paddle->name = "LeftPaddle";
         paddle->position = glm::vec3(10.0f*0.5f, window.GetScreenHeight() * 0.5f, 0.0f);
     }

@@ -34,12 +34,15 @@ public:
     void Update(glm::mat4 _view, glm::mat4 _projection, float _dt) {
         for(Entity* e : entities)
         {
-            e->Update(_dt);
+           
 
             e->shader.Use();
             e->shader.SetFloat("TIME", SDL_GetTicks() / 1000.0f);
             e->shader.SetMat4("PROJECTION", _projection);
             e->shader.SetMat4("VIEW", _view);
+
+            glActiveTexture(GL_TEXTURE0 + 0);
+            glBindTexture(GL_TEXTURE_2D, e->texture.id);
 
             e->Draw();
 
@@ -47,6 +50,7 @@ public:
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
             e->shader.UnUse();
+            e->Update(_dt);
             if(e->destroyAt0 == 0){
                 Destroy(e);
             }
