@@ -48,12 +48,14 @@ void Ball::Update(float _dt) {
     Paddle* leftPaddle = world->FindByName<Paddle>("LeftPaddle"); 
     if (EntityOverlap2D(*this ,*leftPaddle)) {
         dir.x = abs(dir.x);
+        color = glm::vec4(0.5,    0.5,   2,   1);
     }
 
     // detect if ball hits right paddle
     Paddle* rightPaddle = world->FindByName<Paddle>("RightPaddle"); 
     if (EntityOverlap2D(*this ,*rightPaddle)) {
         dir.x = abs(dir.x) * -1.0f;
+        color = glm::vec4(2,    0.5,   0.5,   1);
     }
 
     if (dir != vec2(0.0f))

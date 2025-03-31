@@ -26,6 +26,7 @@
 // move out to external class
 unsigned int vertexShader;
 unsigned int VBO, VAO, EBO;
+bool ballColorRed;
 
 void InitModel();
 
@@ -46,6 +47,7 @@ int main(int argc, char *argv[])
     frameRateManager.Init(60.0f);
     float deltaTime = 0.0f;
     float fps = 0.0f;
+    ballColorRed = false;
 
     Canis::Shader spriteShader;
     spriteShader.Compile("assets/shaders/sprite.vs", "assets/shaders/sprite.fs");
@@ -77,12 +79,15 @@ int main(int argc, char *argv[])
     Ball *ball = world.Instantiate<Ball>();
     ball->shader = spriteShader;
     ball->texture = texture;
+    ball->color = glm::vec4(1,1,1,1);
+    
 
     {
         Paddle *paddle = world.Instantiate<Paddle>();
         paddle->shader = spriteShader;
         paddle->texture = texture2;
         paddle->name = "RightPaddle";
+        paddle->color = glm::vec4(2,    0.5,   0.5,   1);
         paddle->position = glm::vec3(window.GetScreenWidth() - (10.0f*0.5f), window.GetScreenHeight() * 0.5f, 0.0f);
     }
 
@@ -91,6 +96,7 @@ int main(int argc, char *argv[])
         paddle->shader = spriteShader;
         paddle->texture = texture2;
         paddle->name = "LeftPaddle";
+        paddle->color = glm::vec4(0.5,  0.5,   2,  1);
         paddle->position = glm::vec3(10.0f*0.5f, window.GetScreenHeight() * 0.5f, 0.0f);
     }
 
@@ -100,6 +106,7 @@ int main(int argc, char *argv[])
             trail->shader = spriteShader;
             trail->texture = texture;
             trail->position = ball->position;
+            trail->color = ball->color;
         deltaTime = frameRateManager.StartFrame();
         glClearColor( 1.0f, 1.0f, 1.0f, 1.0f);
 
