@@ -131,6 +131,11 @@ int main(int argc, char *argv[])
         }
     }
 
+    Ball *ballRain = world.Instantiate<Ball>();
+    ballRain->shader = spriteShader;
+    ballRain->texture = texture;
+    ballRain->color = glm::vec4(1,1,1,1);
+
     return 0;
 }
 
