@@ -19,6 +19,7 @@ public:
     int scoreRight = 0;
 
     bool close = false;
+    int victoryColor = 0;
 
     template<typename T>
     T* Instantiate() {
@@ -86,6 +87,7 @@ public:
     }
 
     void incrementScore(int winningSide){
+        if(close){ return; }
         if(winningSide == 0){
             scoreLeft++;
         }
@@ -100,10 +102,16 @@ public:
         if(scoreLeft >=5){
             Canis::Log("Player 1 has won!");
             close = true;
+            if(victoryColor == 0){
+                victoryColor = 1;
+            }
         }
         else if(scoreRight >=5){
             Canis::Log("Player 2 has won!");
             close = true;
+            if(victoryColor == 0){
+                victoryColor = 2;
+            }
         }
     }
 };

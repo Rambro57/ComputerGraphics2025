@@ -27,6 +27,7 @@
 unsigned int vertexShader;
 unsigned int VBO, VAO, EBO;
 bool ballColorRed;
+int timeToClose = 500;
 
 void InitModel();
 
@@ -100,8 +101,28 @@ int main(int argc, char *argv[])
         paddle->position = glm::vec3(10.0f*0.5f, window.GetScreenHeight() * 0.5f, 0.0f);
     }
 
-    while (inputManager.Update(window.GetScreenWidth(), window.GetScreenHeight()) && !world.close)
+    while (inputManager.Update(window.GetScreenWidth(), window.GetScreenHeight()))
     {
+        if(world.close){
+            timeToClose--;
+            if(timeToClose <= 0){ return 0; }
+            if(timeToClose%20==0){
+                Ball *ballRain = world.Instantiate<Ball>();
+                ballRain->shader = spriteShader;
+                ballRain->texture = texture;
+                ballRain->speed = 250.0f;
+                if(world.victoryColor == 1){
+                    ballRain->color = glm::vec4(0.5,    0.5,   2,   1);
+                    ball->color = glm::vec4(0.5,    0.5,   2,   1);
+                }
+                else if(world.victoryColor == 2){
+                    ballRain->color = glm::vec4(2,    0.5,   0.5,   1);
+                    ball->color = glm::vec4(2,    0.5,   0.5,   1);
+                }
+            }
+            
+        }
+
         Trail *trail = world.Instantiate<Trail>();
             trail->shader = spriteShader;
             trail->texture = texture;
@@ -130,11 +151,6 @@ int main(int argc, char *argv[])
             std::cout << "FPS: " << fps << std::endl;
         }
     }
-
-    Ball *ballRain = world.Instantiate<Ball>();
-    ballRain->shader = spriteShader;
-    ballRain->texture = texture;
-    ballRain->color = glm::vec4(1,1,1,1);
 
     return 0;
 }
