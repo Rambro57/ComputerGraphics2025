@@ -16,6 +16,7 @@
 #include "Ball.hpp"
 #include "Paddle.hpp"
 #include "Trail.hpp"
+#include "Background.hpp"  // Added background include
 
 //Test
 
@@ -56,10 +57,18 @@ int main(int argc, char *argv[])
     spriteShader.AddAttribute("aUV");
     spriteShader.Link();
 
+    // Create background shader
+    Canis::Shader backgroundShader;
+    backgroundShader.Compile("assets/shaders/background.vs", "assets/shaders/background.fs");
+    backgroundShader.AddAttribute("aPos");
+    backgroundShader.AddAttribute("aUV");
+    backgroundShader.Link();
+
     InitModel();
 
     Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/LaserBallSprite.png", true);
     Canis::GLTexture texture2 = Canis::LoadImageGL("assets/textures/LightsaberSprite.png", true);
+    Canis::GLTexture bgTexture = Canis::LoadImageGL("assets/textures/background.png", true);  // Load background texture
 
     int textureSlots = 1;
 
@@ -68,6 +77,7 @@ int main(int argc, char *argv[])
     Canis::Log(std::to_string(textureSlots));
 
     spriteShader.SetInt("texture1", 0);
+    backgroundShader.SetInt("texture1", 0);  // Set texture slot for background shader
 
     glActiveTexture(GL_TEXTURE0 + 0);
     glBindTexture(GL_TEXTURE_2D, texture.id);
@@ -77,6 +87,12 @@ int main(int argc, char *argv[])
     world.window = &window;
     world.inputManager = &inputManager;
 
+    // Create background
+    Background *background = world.Instantiate<Background>();
+    background->shader = backgroundShader;
+    background->texture = bgTexture;
+    background->color = glm::vec4(1, 1, 1, 1);
+    
     Ball *ball = world.Instantiate<Ball>();
     ball->shader = spriteShader;
     ball->texture = texture;

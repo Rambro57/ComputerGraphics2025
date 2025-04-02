@@ -25,7 +25,7 @@ public:
     T* Instantiate() {
         T* entity = new T;
         entity->window = window;
-        entity->inputManager;
+        entity->inputManager = inputManager; 
         entity->world = this;
         entity->Start();
         entities.push_back((Entity*)entity);
