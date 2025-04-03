@@ -6,7 +6,13 @@ using namespace glm;
 
 void Ball::Start() {
     name = "Ball";
-    position = vec3(window->GetScreenWidth() * 0.5f, window->GetScreenHeight() * 0.5f, 0.0f);
+    
+    if(world->close){
+        position = vec3(window->GetScreenWidth() * 0.5f, window->GetScreenHeight() * 1.0f, 0.0f);
+    }
+    else{
+        position = vec3(window->GetScreenWidth() * 0.5f, window->GetScreenHeight() * 0.5f, 0.0f);
+    }
     scale = vec3(100.0f, 100.0f, 0.0f);
     destroyAt0 = -1;
 }
@@ -20,7 +26,6 @@ void Ball::Update(float _dt) {
             float randX = (float)rand()/RAND_MAX;
             float randY = (float)rand()/RAND_MAX;
             if(rand() > RAND_MAX/2){ randX = -randX; }
-            if(rand() > RAND_MAX/2){ randY = -randY; }
             dir = vec2(randX, randY);
         }
         else if (inputManager->GetKey(SDL_SCANCODE_SPACE))
